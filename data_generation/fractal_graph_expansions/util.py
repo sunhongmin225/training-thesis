@@ -27,13 +27,28 @@ from absl import logging
 
 import numpy as np
 import pandas as pd
+import json
 from scipy import sparse
-import tensorflow as tf
+#import tensorflow as tf
+
+
+def load_mmap_from_file(indptr_path, indices_path, conf_path):
+    conf = json.load(open(conf_path, 'r'))
+
+    indptr = np.memmap(indptr_path, mode='r', shape=tuple(conf['indptr_shape']), dtype=conf['indptr_dtype'])
+    indices = np.memmap(indices_path, mode='r', shape=tuple(conf['indices_shape']), dtype=conf['indices_dtype'])
+    num_nodes = conf['num_nodes']
+
+    data = np.ones(conf['indices_shape'][0])
+    matrix = sparse.csc_matrix((data, indices, indptr), shape=(num_nodes, num_nodes))
+
+    return matrix
 
 
 def load_df_from_file(file_path, sep=",", header=0):
   """Wrapper around pandas' read_csv."""
-  with tf.gfile.Open(file_path) as infile:
+#with tf.gfile.Open(file_path) as infile:
+  with open(file_path) as infile:
     df = pd.read_csv(infile, sep=sep, header=header)
   return df
 
@@ -62,7 +77,8 @@ def describe_rating_df(df, df_name=""):
 def serialize_to_file(obj, file_name, append=False):
   """Pickle obj to file_name."""
   logging.info("Serializing to file %s.", file_name)
-  with tf.gfile.Open(file_name, "a+" if append else "wb") as output_file:
+#with tf.gfile.Open(file_name, "a+" if append else "wb") as output_file:
+  with open(file_name, "a+" if append else "wb") as output_file:
     pickle.dump(obj, output_file)
   logging.info("Done serializing to file %s.", file_name)
 
@@ -100,4 +116,14 @@ def sparse_where_equal(coo_matrix, target_value):
   col_where = coo_matrix.col[cond_is_true]
 
   return sparse.csr_matrix(
+      (data_where, (row_where, col_where)), shape=coo_matrix.shape)
+
+def sparse_where_equal_csc(coo_matrix, target_value):
+
+  cond_is_true = coo_matrix.data == target_value
+  data_where = coo_matrix.data[cond_is_true]
+  row_where = coo_matrix.row[cond_is_true]
+  col_where = coo_matrix.col[cond_is_true]
+
+  return sparse.csc_matrix(
       (data_where, (row_where, col_where)), shape=coo_matrix.shape)
