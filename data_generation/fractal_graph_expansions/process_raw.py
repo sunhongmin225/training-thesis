@@ -5,13 +5,13 @@ import numpy as np
 import json
 import torch
 
-# data_path = "/data/nvme1n1p1/msh/synthetic/twitter/raw/twitter-2010.txt"
-# write_file_path = "/data/nvme1n1p1/msh/synthetic/twitter/raw/"
+# data_path = "/home/nvadmin/msh/datasets/twitter/raw/twitter-2010.txt"
+# write_file_path = "/home/nvadmin/msh/datasets/twitter/raw/"
 # num_nodes = 41652230
 # num_edges = 1468364884
 # num_lines = 1468365182
-data_path = "/data/nvme1n1p1/msh/synthetic/friendster/raw/com-friendster.ungraph.txt"
-write_file_path = "/data/nvme1n1p1/msh/synthetic/friendster/raw/"
+data_path = "/home/nvadmin/msh/datasets/friendster/raw/com-friendster.ungraph.txt"
+write_file_path = "/home/nvadmin/msh/datasets/friendster/raw/"
 num_nodes = 65608366
 num_edges = 1806067135
 num_lines = 1806067139

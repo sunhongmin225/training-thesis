@@ -21,6 +21,10 @@ elif "ogbn_products" in args.prefix:
     base_num_nodes = 2449029
 elif "reddit" in args.prefix:
     base_num_nodes = 232965
+elif "friendster" in args.prefix:
+    base_num_nodes = 65608366
+elif "twitter" in args.prefix:
+    base_num_nodes = 41652230
 
 # data_path = "./data/"
 logging.set_verbosity(logging.INFO)

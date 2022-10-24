@@ -14,7 +14,7 @@ def load_mmap_from_file(indptr_path, indices_path, conf_path):
     num_nodes = conf['num_nodes']
 
     data = np.ones(conf['indices_shape'][0])
-    matrix = sparse.csc_matrix((data, indices, indptr), shape=(num_nodes, num_nodes))
+    matrix = sparse.csr_matrix((data, indices, indptr), shape=(num_nodes, num_nodes * args.col))
 
     return matrix
 
@@ -38,12 +38,6 @@ def read_pickle_file (data_name):
 	print(objects)
 
 
-indptr_path = "/data/nvme1n1p1/msh/synthetic/dummy/dummy_x4x4_csc_indptr.dat"
-indices_path = "/data/nvme1n1p1/msh/synthetic/dummy/dummy_x4x4_csc_indices.dat"
-conf_path = "/data/nvme1n1p1/msh/synthetic/dummy/dummy_x4x4_csc_conf.json"
-matrix = load_mmap_from_file (indptr_path, indices_path, conf_path)
-print(matrix.todense())
-
 data1_name = "movielens_ndi_x2x4_0.npz"
 data2_name = "movielens_ndi_x2x4_1.npz"
 
@@ -62,12 +56,12 @@ metadata_name = "movielens_metadata_x2x4"
 # read_pickle_file(metadata_name)
 
 num_edges = 0
-multiplier = 10
-dataset_name = "twitter"
+multiplier = 4
+dataset_name = "friendster"
 # dataset_name = "ogbn_papers"
 # dataset_name = "reddit"
 for i in range(multiplier):
-	file_name = "/data/nvme1n1p1/msh/synthetic/" + dataset_name + "/" + dataset_name + "_x" + str(multiplier) + "x" + str(multiplier) + "_csc_" + str(i) + "_conf.json"
+	file_name = "/home/nvadmin/msh/datasets/" + dataset_name + "/" + dataset_name + "_x" + str(multiplier) + "x" + str(multiplier) + "_csr_" + str(i) + "_conf.json"
 	conf = json.load(open(file_name, 'r'))
 	edge = conf['indices_shape'][0]
 	num_edges += edge

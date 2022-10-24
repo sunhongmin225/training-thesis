@@ -109,6 +109,7 @@ def main(_):
     # Fix seed for reproducibility
     np.random.seed(FLAGS.random_seed)
 
+    print("args.row: {}, args.col: {}, args.prefix: {}".format(args.row, args.col, args.prefix))
     file_name = args.prefix + "x" + str(args.row) + "x" + str(args.col) + "_csc"
     conf_files = list()
     indptr_files = list()
@@ -167,6 +168,7 @@ def main(_):
             del(curr_indices)
 
     logging.info("Done creating my_indices_structrue")
+    print("len(my_indices_structure[0]): {}".format(len(my_indices_structure[0])))
 
     del(indptr_list)
     del(indices_list)
@@ -176,7 +178,8 @@ def main(_):
     logging.info("Creating my_indices")
     for i in range(base_num_nodes * args.row):
         processed += 1
-        if processed % 10000000 == 0:
+        # if processed % 10000000 == 0:
+        if processed % 1000 == 0:
             logging.info("Processed %d / %d (%2f percent) nodes", processed, base_num_nodes * args.row, 100 * processed / (base_num_nodes * args.row))
         for my_index in my_indices_structure[i]:
             my_indices = np.append(my_indices, [my_index])
