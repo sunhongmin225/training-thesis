@@ -1,52 +1,30 @@
-# MLPerf™ Training Reference Implementations
+# Dataset Expansion 하는 방법
 
-This is a repository of reference implementations for the MLPerf training benchmarks. These implementations are valid as starting points for benchmark implementations but are not fully optimized and are not intended to be used for "real" performance measurements of software frameworks or hardware. 
+1. `git clone https://github.com/sunhongmin225/training-thesis`
 
-Please see the [MLPerf Training Benchmark](https://arxiv.org/abs/1910.01500) paper for a detailed description of the motivation and guiding principles behind the benchmark suite. If you use any part of this benchmark (e.g., reference implementations, submissions, etc.) in academic work, please cite the following:
+2. `cd training-thesis/data_generation/fractal_graph_expansions`
+
+3. `run.sh`에서 expand하고 싶은 target dataset에 따라 적절한 line을 uncomment한다.
+
+* e.g., `twitter`를 expand할 경우의 `run.sh`의 contents:
 
 ```
-@misc{mattson2019mlperf,
-    title={MLPerf Training Benchmark},
-    author={Peter Mattson and Christine Cheng and Cody Coleman and Greg Diamos and Paulius Micikevicius and David Patterson and Hanlin Tang and Gu-Yeon Wei and Peter Bailis and Victor Bittorf and David Brooks and Dehao Chen and Debojyoti Dutta and Udit Gupta and Kim Hazelwood and Andrew Hock and Xinyuan Huang and Atsushi Ike and Bill Jia and Daniel Kang and David Kanter and Naveen Kumar and Jeffery Liao and Guokai Ma and Deepak Narayanan and Tayo Oguntebi and Gennady Pekhimenko and Lillian Pentecost and Vijay Janapa Reddi and Taylor Robie and Tom St. John and Tsuguchika Tabaru and Carole-Jean Wu and Lingjie Xu and Masafumi Yamazaki and Cliff Young and Matei Zaharia},
-    year={2019},
-    eprint={1910.01500},
-    archivePrefix={arXiv},
-    primaryClass={cs.LG}
-}
+#!/bin/bash
+
+indptr_file="/home/nvadmin/msh/datasets/twitter/raw/indptr.dat" # change directory appropriately
+indices_file="/home/nvadmin/msh/datasets/twitter/raw/indices.dat"
+conf_file="/home/nvadmin/msh/datasets/twitter/raw/conf.json"
+output_prefix="/home/nvadmin/msh/datasets/twitter/twitter_"
+
+num_row_multiplier=6
+num_col_multiplier=6
+
+python3 run_expansion.py --indptr_file=$indptr_file --indices_file=$indices_file --conf_file=$conf_file --output_prefix=$output_prefix --num_row_multiplier=$num_row_multiplier --num_col_multiplier=$num_col_multiplier
+
+python3 merge_csr_to_csc.py --row=$num_row_multiplier --col=$num_col_multiplier --prefix=$output_prefix
 ```
 
-These reference implementations are still very much "alpha" or "beta" quality. They could be improved in many ways. Please file issues or pull requests to help us improve quality.
+* 마지막 줄의 `python3 merge_cscs_to_csc.py`는 무시
+* `num_row_multiplier`와 `num_col_multiplier`은 같은 값을 준다. 이 값이 커질수록 output dataset의 크기가 커진다. `twitter`은 6, `products`는 128을 줬던 것 같고 `papers`, `friendster`는 각각 몇을 줬는지 잘 기억이 나지 않는다. 대강 10 정도의 값을 줘보고 output dataset의 크기를 보고 empirical 하게 늘려가면 된다.
 
-# Contents
-
-We provide reference implementations for benchmarks in the MLPerf suite, as well as several benchmarks under development. 
-
-Each reference implementation provides the following:
- 
-* Code that implements the model in at least one framework.
-* A Dockerfile which can be used to run the benchmark in a container.
-* A script which downloads the appropriate dataset.
-* A script which runs and times training the model.
-* Documentation on the dataset, model, and machine setup.
-
-# Running Benchmarks
-
-These benchmarks have been tested on the following machine configuration:
-
-* 16 CPUs, one Nvidia P100.
-* Ubuntu 16.04, including docker with nvidia support.
-* 600GB of disk (though many benchmarks do require less disk).
-* Either CPython 2 or CPython 3, depending on benchmark (see Dockerfiles for details).
-
-Generally, a benchmark can be run with the following steps:
-
-1. Setup docker & dependencies. There is a shared script (install_cuda_docker.sh) to do this. Some benchmarks will have additional setup, mentioned in their READMEs.
-2. Download the dataset using `./download_dataset.sh`. This should be run outside of docker, on your host machine. This should be run from the directory it is in (it may make assumptions about CWD).
-3. Optionally, run `verify_dataset.sh` to ensure the was successfully downloaded.
-4. Build and run the docker image, the command to do this is included with each Benchmark. 
-
-Each benchmark will run until the target quality is reached and then stop, printing timing results. 
-
-Some these benchmarks are rather slow or take a long time to run on the reference hardware (i.e. 16 CPUs and one P100). We expect to see significant performance improvements with more hardware and optimized implementations. 
-
-
+4. `bash run.sh`
