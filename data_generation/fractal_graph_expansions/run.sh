@@ -26,10 +26,10 @@ output_prefix="/home/nvadmin/msh/datasets/twitter/twitter_"
 # 64 => 15,606,468,085
 # 80 => 17,102,635,685
 # 90 =>
-num_row_multiplier=4
-num_col_multiplier=4
+num_row_multiplier=6
+num_col_multiplier=6
 
-# python3 run_expansion.py --indptr_file=$indptr_file --indices_file=$indices_file --conf_file=$conf_file --output_prefix=$output_prefix --num_row_multiplier=$num_row_multiplier --num_col_multiplier=$num_col_multiplier
+python3 run_expansion.py --indptr_file=$indptr_file --indices_file=$indices_file --conf_file=$conf_file --output_prefix=$output_prefix --num_row_multiplier=$num_row_multiplier --num_col_multiplier=$num_col_multiplier
 
 python3 merge_csr_to_csc.py --row=$num_row_multiplier --col=$num_col_multiplier --prefix=$output_prefix
 
